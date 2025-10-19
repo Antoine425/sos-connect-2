@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     VitePWA({
@@ -59,7 +59,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/sos-connect-2/',
+  base: mode === 'production' ? '/sos-connect-2/' : '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
@@ -82,4 +82,4 @@ export default defineConfig({
     port: 4173,
     host: true
   }
-})
+}))
