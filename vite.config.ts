@@ -1,71 +1,85 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
-import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import { VitePWA } from 'vite-plugin-pwa'
+import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/sos-quick-connect/' : '/',
-  server: {
-    host: "::",
-    port: 8080,
-  },
+export default defineConfig({
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
     VitePWA({
-      registerType: "autoUpdate",
-      includeAssets: ["icon-192.png", "icon-512.png"],
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: "SOS HELP - Signal d'urgence familial",
-        short_name: "SOS HELP",
-        description: "Application d'urgence pour contacter rapidement votre proche en un clic",
-        theme_color: "#FF4444",
-        background_color: "#FFFFFF",
-        display: "standalone",
-        orientation: "portrait",
-        scope: "/",
-        start_url: "/",
+        name: 'SOS Connect',
+        short_name: 'SOS Connect',
+        description: 'Application d\'urgence familiale - Alertez vos proches en un clic',
+        theme_color: '#2563eb',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
-            src: "/icon-192.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any maskable",
+            src: 'icon-192.png',
+            sizes: '192x192',
+            type: 'image/png'
           },
           {
-            src: "/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable",
-          },
-        ],
+            src: 'icon-512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: "CacheFirst",
+            handler: 'CacheFirst',
             options: {
-              cacheName: "google-fonts-cache",
+              cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 an
               },
               cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
-      },
-    }),
-  ].filter(Boolean),
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
+    })
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-}));
+  base: '/sos-connect-2/',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast']
+        }
+      }
+    }
+  },
+  server: {
+    port: 5173,
+    host: true
+  },
+  preview: {
+    port: 4173,
+    host: true
+  }
+})
