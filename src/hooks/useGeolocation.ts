@@ -33,41 +33,62 @@ export const useGeolocation = (): GeolocationHook => {
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setLocation(coords);
-          setIsLoading(false);
-          resolve(coords);
-        },
-        (error) => {
-          let errorMessage = "Impossible d'obtenir votre position";
-          
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = "Géolocalisation refusée";
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = "Position indisponible";
-              break;
-            case error.TIMEOUT:
-              errorMessage = "Délai d'attente dépassé";
-              break;
-          }
-          
-          setError(errorMessage);
-          setIsLoading(false);
-          resolve(null);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000, // Réduit le timeout pour une réponse plus rapide
-          maximumAge: 0
-        }
-      );
+      // Fonction pour essayer la géolocalisation avec des paramètres donnés
+      const tryGeolocation = (options: PositionOptions, attempt: number) => {
+        console.log(`🔄 Tentative ${attempt} de géolocalisation avec options:`, options);
+        
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const coords = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            console.log(`✅ Géolocalisation réussie (tentative ${attempt}):`, coords);
+            setLocation(coords);
+            setIsLoading(false);
+            resolve(coords);
+          },
+          (error) => {
+            console.warn(`❌ Échec tentative ${attempt}:`, error.message);
+            
+            // Si c'est la première tentative et qu'elle échoue, essayer avec enableHighAccuracy: true
+            if (attempt === 1) {
+              console.log("🔄 Retry avec enableHighAccuracy: true");
+              tryGeolocation({
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+              }, 2);
+            } else {
+              let errorMessage = "Impossible d'obtenir votre position";
+              
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  errorMessage = "Géolocalisation refusée";
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  errorMessage = "Position indisponible";
+                  break;
+                case error.TIMEOUT:
+                  errorMessage = "Délai d'attente dépassé";
+                  break;
+              }
+              
+              setError(errorMessage);
+              setIsLoading(false);
+              resolve(null);
+            }
+          },
+          options
+        );
+      };
+
+      // Première tentative avec des paramètres permissifs
+      tryGeolocation({
+        enableHighAccuracy: false,
+        timeout: 20000,
+        maximumAge: 300000
+      }, 1);
     });
   }, []);
 

@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Home, MapPin, Heart, Car, CreditCard } from "lucide-react";
+import { Home } from "lucide-react";
 import { useEffect } from "react";
 import { SOSType } from "@/types/sos";
 import { getSOSButton, TITULAIRE_NAME } from "@/config/sos-config";
@@ -82,8 +82,8 @@ const Confirmation = () => {
                 </p>
 
                         {sosConfig.gpsRequired && (
-                          <div className="text-center text-sm text-muted-foreground">
-                            <span>
+                          <div className="text-center text-sm">
+                            <span className={hasLocation ? "text-green-600 font-semibold" : "text-orange-600 font-semibold"}>
                               {hasLocation
                                 ? "✅ Position partagée automatiquement"
                                 : "⚠️ Position non disponible - SOS envoyé sans géolocalisation"
@@ -113,20 +113,45 @@ const Confirmation = () => {
               <Home className="w-5 h-5 mr-2" />
               Retour à l'accueil
             </Button>
-            
-            <Button
-              onClick={() => navigate("/history")}
-              variant="outline"
-              size="lg"
-              className="w-full h-14 text-lg rounded-full"
-            >
-              Voir mes SOS
-            </Button>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="py-4 px-4 mt-8">
+          <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
+            <img 
+              src="/logo-sos-connect.png" 
+              alt="SOS Connect" 
+              className="h-8 w-auto object-contain opacity-70"
+            />
+            <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground text-center">
+              <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
+              <div className="flex gap-2">
+                <a 
+                  href="https://paytrip.fr/mentions-legales" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground underline transition-colors"
+                >
+                  Mentions légales
+                </a>
+                <span>/</span>
+                <a 
+                  href="https://paytrip.fr/confidentialite" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground underline transition-colors"
+                >
+                  Confidentialité
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
 };
 
 export default Confirmation;
+
