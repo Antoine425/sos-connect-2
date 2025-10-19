@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/sos-connect-2/sw.js', { scope: '/sos-connect-2/' })})}
