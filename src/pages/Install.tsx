@@ -86,7 +86,7 @@ const Install = () => {
           {/* Logo */}
           <div className="flex justify-center">
             <img 
-              src="/logo-sos-connect.png" 
+              src="/sos-connect-2/logo-sos-connect.png" 
               alt="SOS Connect" 
               className="h-20 w-auto object-contain"
             />
@@ -246,7 +246,7 @@ const Install = () => {
           {/* Footer */}
           <div className="text-center space-y-2">
             <img 
-              src="/logo-sos-connect.png" 
+              src="/sos-connect-2/logo-sos-connect.png" 
               alt="SOS Connect" 
               className="h-8 w-auto object-contain opacity-70 mx-auto"
             />

@@ -120,7 +120,7 @@ const Confirmation = () => {
         <footer className="py-4 px-4 mt-8">
           <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
             <img 
-              src="/logo-sos-connect.png" 
+              src="/sos-connect-2/logo-sos-connect.png" 
               alt="SOS Connect" 
               className="h-8 w-auto object-contain opacity-70"
             />

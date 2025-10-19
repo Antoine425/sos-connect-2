@@ -72,7 +72,7 @@ const Index = () => {
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-4">
           <div className="container max-w-md mx-auto flex items-center justify-center">
             <img 
-              src="/logo-sos-connect.png" 
+              src="/sos-connect-2/logo-sos-connect.png" 
               alt="SOS Connect" 
               className="h-12 w-auto object-contain"
             />
@@ -156,7 +156,7 @@ const Index = () => {
         <footer className="border-t border-border py-4 px-4 mt-1">
           <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
             <img 
-              src="/logo-sos-connect.png" 
+              src="/sos-connect-2/logo-sos-connect.png" 
               alt="SOS Connect" 
               className="h-8 w-auto object-contain opacity-70"
             />
