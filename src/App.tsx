@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Confirmation from "./pages/Confirmation";
 import History from "./pages/History";
 import Install from "./pages/Install";
+import Diagnostic from "./pages/Diagnostic";
 // import TestTokens from "./pages/TestTokens";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/history" element={<History />} />
           <Route path="/install" element={<Install />} />
+          <Route path="/diagnostic" element={<Diagnostic />} />
           {/* <Route path="/test-tokens" element={<TestTokens />} /> */}
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

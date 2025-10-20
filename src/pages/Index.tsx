@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { SOSButtonsGrid } from "@/components/SOSButtonsGrid";
+import { MobileDebugConsole } from "@/components/MobileDebugConsole";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { SOSType } from "@/types/sos";
@@ -9,11 +10,15 @@ import { useGeolocation } from "@/hooks/useGeolocation";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSOSType, setCurrentSOSType] = useState<SOSType | null>(null);
   const [selectedSOSType, setSelectedSOSType] = useState<SOSType | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const { requestLocation } = useGeolocation();
+  
+  // Enable debug console with ?debug=true URL parameter
+  const showDebugConsole = searchParams.get('debug') === 'true';
 
   const handleSOSClick = async (type: SOSType, amount?: number) => {
     setCurrentSOSType(type);
@@ -25,18 +30,32 @@ const Index = () => {
       
       if (sosConfig?.gpsRequired) {
         console.log("🔍 Géolocalisation requise, tentative d'obtention de la position...");
+        console.log("📱 User Agent:", navigator.userAgent);
+        console.log("🔒 Protocol:", window.location.protocol);
+        console.log("🌐 Hostname:", window.location.hostname);
+        console.log("🧭 Geolocation disponible:", 'geolocation' in navigator);
+        
         setIsGettingLocation(true);
-        toast.info("Obtention de votre position...", { duration: 2000 });
+        toast.info("Obtention de votre position haute précision...", { duration: 2000 });
         
         location = await requestLocation();
         setIsGettingLocation(false);
         
         if (!location) {
-          console.warn("⚠️ Échec de la géolocalisation - SOS envoyé sans position");
-          toast.error("Le SOS sera envoyé sans géolocalisation");
+          console.error("❌ ÉCHEC GÉOLOCALISATION - Aucune position retournée");
+          console.error("Vérifiez la console pour voir les erreurs détaillées");
+          
+          // Message d'erreur plus visible
+          toast.error("❌ Impossible d'obtenir votre position", { 
+            duration: 5000,
+            description: "Cliquez sur 'Diagnostic GPS' en bas de page pour identifier le problème"
+          });
         } else {
           console.log("✅ Géolocalisation réussie:", location);
-          toast.success("Position partagée avec succès");
+          const accuracyText = location.accuracy 
+            ? ` (Précision: ${location.accuracy.toFixed(0)}m)`
+            : '';
+          toast.success(`Position partagée avec succès${accuracyText}`, { duration: 3000 });
         }
       }
 
@@ -55,7 +74,14 @@ const Index = () => {
       });
 
       // Navigate to confirmation with SOS type
-      navigate("/confirmation", { state: { type, amount, hasLocation: !!location } });
+      navigate("/confirmation", { 
+        state: { 
+          type, 
+          amount, 
+          hasLocation: !!location, 
+          coordinates: location // Renommé pour éviter conflit avec React Router "location"
+        } 
+      });
     } catch (error) {
       console.error("Error sending SOS:", error);
       toast.error("Erreur lors de l'envoi du SOS");
@@ -67,6 +93,7 @@ const Index = () => {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-4">
@@ -117,12 +144,16 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {isGettingLocation ? (
                       <>
-                        <strong>Géolocalisation en cours...</strong> Votre navigateur va vous demander l'autorisation d'accéder à votre position. 
-                        Cliquez sur "Autoriser" pour partager votre localisation avec {TITULAIRE_NAME}.
+                        <strong>🎯 Géolocalisation haute précision en cours...</strong><br/>
+                        Votre navigateur va vous demander l'autorisation d'accéder à votre position. 
+                        Cliquez sur "Autoriser" pour partager votre localisation exacte avec {TITULAIRE_NAME}.<br/>
+                        <span className="text-xs text-muted-foreground/80 mt-2 block">
+                          Le GPS peut prendre quelques secondes pour obtenir la meilleure précision possible.
+                        </span>
                       </>
                     ) : (
                       <>
-                        <strong>Restez calme.</strong> Votre position est partagée automatiquement. 
+                        <strong>Restez calme.</strong> Votre position précise a été partagée automatiquement. 
                         {TITULAIRE_NAME} recevra votre demande et vous répondra rapidement.
                       </>
                     )}
@@ -162,7 +193,7 @@ const Index = () => {
             />
             <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground text-center">
               <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap justify-center gap-2">
                 <a 
                   href="https://paytrip.fr/mentions-legales" 
                   target="_blank" 
@@ -180,12 +211,23 @@ const Index = () => {
                 >
                   Confidentialité
                 </a>
+                <span>/</span>
+                <button
+                  onClick={() => navigate("/diagnostic")}
+                  className="hover:text-foreground underline transition-colors"
+                >
+                  🔍 Diagnostic GPS
+                </button>
               </div>
             </div>
           </div>
         </footer>
       </div>
-    );
+      
+      {/* Mobile Debug Console (activate with ?debug=true) */}
+      {showDebugConsole && <MobileDebugConsole />}
+    </>
+  );
 };
 
 export default Index;

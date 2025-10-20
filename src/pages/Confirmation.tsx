@@ -13,7 +13,16 @@ const Confirmation = () => {
   const sosType = location.state?.type as SOSType;
   const amount = location.state?.amount as number;
   const hasLocation = location.state?.hasLocation as boolean;
+  // CORRECTION: utiliser "coordinates" au lieu de "location" pour éviter conflit
+  const gpsLocation = location.state?.coordinates as { lat: number; lng: number; accuracy?: number } | null;
   const sosConfig = getSOSButton(sosType);
+
+  // Debug logs
+  console.log("=== PAGE CONFIRMATION ===");
+  console.log("hasLocation:", hasLocation);
+  console.log("gpsLocation:", gpsLocation);
+  console.log("Type de gpsLocation:", typeof gpsLocation);
+  console.log("State complet:", location.state);
 
   useEffect(() => {
     // Optional: Auto-redirect after some time
@@ -82,13 +91,63 @@ const Confirmation = () => {
                 </p>
 
                         {sosConfig.gpsRequired && (
-                          <div className="text-center text-sm">
-                            <span className={hasLocation ? "text-green-600 font-semibold" : "text-orange-600 font-semibold"}>
+                          <div className="text-center text-sm space-y-3">
+                            <span className={hasLocation ? "text-green-600 font-semibold text-base" : "text-orange-600 font-semibold text-base"}>
                               {hasLocation
                                 ? "✅ Position partagée automatiquement"
                                 : "⚠️ Position non disponible - SOS envoyé sans géolocalisation"
                               }
                             </span>
+                            
+                            {/* Debug: Position reçue mais pas d'objet gpsLocation */}
+                            {hasLocation && !gpsLocation && (
+                              <div className="mt-3 text-xs bg-red-50 dark:bg-red-950 border border-red-300 rounded-lg p-3">
+                                <div className="text-red-600 font-semibold mb-1">⚠️ Debug: Position marquée comme partagée mais coordonnées non disponibles</div>
+                                <div className="text-red-600 text-xs">Ouvrez la console pour voir les détails (hasLocation=true mais gpsLocation=null)</div>
+                              </div>
+                            )}
+                            
+                            {/* Affichage des coordonnées GPS */}
+                            {hasLocation && gpsLocation && (
+                              <div className="mt-3 bg-green-50 dark:bg-green-950/30 border-2 border-green-300 dark:border-green-800 rounded-lg p-4 space-y-3">
+                                {/* Titre */}
+                                <div className="text-green-800 dark:text-green-200 font-bold text-base">
+                                  📍 Votre Position GPS
+                                </div>
+                                
+                                {/* Précision de la position */}
+                                {gpsLocation.accuracy !== undefined && (
+                                  <div className={`font-semibold text-base ${
+                                    gpsLocation.accuracy < 20 ? 'text-green-600' :
+                                    gpsLocation.accuracy < 50 ? 'text-blue-600' :
+                                    gpsLocation.accuracy < 100 ? 'text-orange-600' :
+                                    'text-red-600'
+                                  }`}>
+                                    🎯 Précision: {gpsLocation.accuracy.toFixed(0)}m
+                                    {gpsLocation.accuracy < 20 && ' (Excellente)'}
+                                    {gpsLocation.accuracy >= 20 && gpsLocation.accuracy < 50 && ' (Très bonne)'}
+                                    {gpsLocation.accuracy >= 50 && gpsLocation.accuracy < 100 && ' (Bonne)'}
+                                    {gpsLocation.accuracy >= 100 && ' (Approximative)'}
+                                  </div>
+                                )}
+                                
+                                {/* Coordonnées */}
+                                <div className="text-foreground font-mono space-y-1.5 text-sm bg-white dark:bg-gray-900 rounded p-3">
+                                  <div className="font-semibold">📍 Latitude: {gpsLocation.lat.toFixed(6)}</div>
+                                  <div className="font-semibold">📍 Longitude: {gpsLocation.lng.toFixed(6)}</div>
+                                </div>
+                                
+                                {/* Lien vers Google Maps */}
+                                <a 
+                                  href={`https://www.google.com/maps?q=${gpsLocation.lat},${gpsLocation.lng}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                                >
+                                  🗺️ Voir ma position sur Google Maps
+                                </a>
+                              </div>
+                            )}
                           </div>
                         )}
               </div>

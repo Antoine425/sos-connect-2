@@ -1,24 +1,31 @@
 import { useState, useCallback } from 'react';
 
 interface GeolocationHook {
-  location: { lat: number; lng: number } | null;
+  location: { lat: number; lng: number; accuracy?: number } | null;
   isLoading: boolean;
   error: string | null;
-  requestLocation: () => Promise<{ lat: number; lng: number } | null>;
+  requestLocation: () => Promise<{ lat: number; lng: number; accuracy?: number } | null>;
 }
 
 export const useGeolocation = (): GeolocationHook => {
-  const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [location, setLocation] = useState<{ lat: number; lng: number; accuracy?: number } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const requestLocation = useCallback(async (): Promise<{ lat: number; lng: number } | null> => {
+  const requestLocation = useCallback(async (): Promise<{ lat: number; lng: number; accuracy?: number } | null> => {
     setIsLoading(true);
     setError(null);
 
     return new Promise((resolve) => {
+      console.log("=== DÉBUT GÉOLOCALISATION ===");
+      console.log("🌐 Navigator.geolocation disponible:", 'geolocation' in navigator);
+      console.log("📶 En ligne:", navigator.onLine);
+      console.log("🔒 Protocol:", window.location.protocol);
+      console.log("🏠 Hostname:", window.location.hostname);
+      
       // Check if geolocation is available
       if (!navigator.geolocation) {
+        console.error("❌ API Geolocation non disponible");
         setError("La géolocalisation n'est pas disponible sur votre appareil");
         setIsLoading(false);
         resolve(null);
@@ -27,68 +34,133 @@ export const useGeolocation = (): GeolocationHook => {
 
       // Check if device is offline
       if (!navigator.onLine) {
+        console.error("❌ Appareil hors ligne");
         setError("Mode hors ligne - géolocalisation indisponible");
         setIsLoading(false);
         resolve(null);
         return;
       }
 
-      // Fonction pour essayer la géolocalisation avec des paramètres donnés
-      const tryGeolocation = (options: PositionOptions, attempt: number) => {
-        console.log(`🔄 Tentative ${attempt} de géolocalisation avec options:`, options);
+      let bestPosition: { lat: number; lng: number; accuracy: number } | null = null;
+      let watchId: number | null = null;
+      let hasResolved = false;
+      
+      // Timer pour accepter la meilleure position après 8 secondes
+      const timer = setTimeout(() => {
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+        }
         
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const coords = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            console.log(`✅ Géolocalisation réussie (tentative ${attempt}):`, coords);
-            setLocation(coords);
-            setIsLoading(false);
-            resolve(coords);
-          },
-          (error) => {
-            console.warn(`❌ Échec tentative ${attempt}:`, error.message);
-            
-            // Si c'est la première tentative et qu'elle échoue, essayer avec enableHighAccuracy: true
-            if (attempt === 1) {
-              console.log("🔄 Retry avec enableHighAccuracy: true");
-              tryGeolocation({
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
-              }, 2);
-            } else {
-              let errorMessage = "Impossible d'obtenir votre position";
-              
-              switch (error.code) {
-                case error.PERMISSION_DENIED:
-                  errorMessage = "Géolocalisation refusée";
-                  break;
-                case error.POSITION_UNAVAILABLE:
-                  errorMessage = "Position indisponible";
-                  break;
-                case error.TIMEOUT:
-                  errorMessage = "Délai d'attente dépassé";
-                  break;
-              }
-              
-              setError(errorMessage);
-              setIsLoading(false);
-              resolve(null);
-            }
-          },
-          options
-        );
+        if (bestPosition && !hasResolved) {
+          console.log(`✅ Position finale acceptée après timeout:`, bestPosition);
+          setLocation(bestPosition);
+          setIsLoading(false);
+          hasResolved = true;
+          resolve(bestPosition);
+        } else if (!hasResolved) {
+          console.warn("❌ Aucune position obtenue après timeout");
+          setError("Impossible d'obtenir une position précise");
+          setIsLoading(false);
+          hasResolved = true;
+          resolve(null);
+        }
+      }, 8000); // 8 secondes pour obtenir la meilleure position possible
+
+      // Options pour une haute précision
+      const options: PositionOptions = {
+        enableHighAccuracy: true, // Active le GPS pour une meilleure précision
+        timeout: 10000, // Timeout par position
+        maximumAge: 0 // Force une nouvelle position, pas de cache
       };
 
-      // Première tentative avec des paramètres permissifs
-      tryGeolocation({
-        enableHighAccuracy: false,
-        timeout: 20000,
-        maximumAge: 300000
-      }, 1);
+      console.log('🎯 Démarrage géolocalisation haute précision...');
+
+      // Utilise watchPosition pour obtenir plusieurs positions et garder la meilleure
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+          
+          console.log(`📍 Position reçue - Précision: ${coords.accuracy.toFixed(0)}m`, coords);
+
+          // Garde la position la plus précise (accuracy la plus faible)
+          if (!bestPosition || coords.accuracy < bestPosition.accuracy) {
+            bestPosition = coords;
+            console.log(`⭐ Nouvelle meilleure position - Précision: ${coords.accuracy.toFixed(0)}m`);
+          }
+
+          // Si on obtient une très bonne précision (< 20m), on peut s'arrêter
+          if (coords.accuracy < 20 && !hasResolved) {
+            clearTimeout(timer);
+            if (watchId !== null) {
+              navigator.geolocation.clearWatch(watchId);
+            }
+            console.log(`✅ Position excellente obtenue (${coords.accuracy.toFixed(0)}m) - Arrêt`);
+            setLocation(coords);
+            setIsLoading(false);
+            hasResolved = true;
+            resolve(coords);
+          }
+        },
+        (error) => {
+          console.error("❌ ERREUR GÉOLOCALISATION");
+          console.error("Code d'erreur:", error.code);
+          console.error("Message:", error.message);
+          console.error("Type:", 
+            error.code === 1 ? "PERMISSION_DENIED" :
+            error.code === 2 ? "POSITION_UNAVAILABLE" :
+            error.code === 3 ? "TIMEOUT" : "UNKNOWN"
+          );
+          
+          clearTimeout(timer);
+          if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+
+          // Si on a déjà une position, on l'utilise malgré l'erreur
+          if (bestPosition && !hasResolved) {
+            console.log(`⚠️ Erreur mais position disponible - Précision: ${bestPosition.accuracy.toFixed(0)}m`);
+            setLocation(bestPosition);
+            setIsLoading(false);
+            hasResolved = true;
+            resolve(bestPosition);
+            return;
+          }
+
+          if (!hasResolved) {
+            let errorMessage = "Impossible d'obtenir votre position";
+            let detailedMessage = "";
+            
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = "Géolocalisation refusée";
+                detailedMessage = "Sur mobile: Réglages → Safari/Chrome → Localisation → Autoriser ce site";
+                console.error("💡 Solution:", detailedMessage);
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = "Position indisponible";
+                detailedMessage = "Activez le GPS dans les paramètres de votre téléphone";
+                console.error("💡 Solution:", detailedMessage);
+                break;
+              case error.TIMEOUT:
+                errorMessage = "Délai d'attente dépassé";
+                detailedMessage = "Le GPS met trop de temps. Êtes-vous en extérieur?";
+                console.error("💡 Solution:", detailedMessage);
+                break;
+            }
+            
+            console.error("=== FIN GÉOLOCALISATION (ÉCHEC) ===");
+            setError(errorMessage);
+            setIsLoading(false);
+            hasResolved = true;
+            resolve(null);
+          }
+        },
+        options
+      );
     });
   }, []);
 
