@@ -74,6 +74,18 @@ const Index = () => {
       });
 
       // Navigate to confirmation with SOS type
+      console.log("=== AVANT NAVIGATION ===");
+      console.log("type:", type);
+      console.log("amount:", amount);
+      console.log("hasLocation:", !!location);
+      console.log("coordinates (location):", location);
+      console.log("Objet complet state:", { 
+        type, 
+        amount, 
+        hasLocation: !!location, 
+        coordinates: location 
+      });
+      
       navigate("/confirmation", { 
         state: { 
           type, 
