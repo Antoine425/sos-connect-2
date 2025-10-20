@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import { Home, CheckCircle2, AlertTriangle, Heart, MapPin, DollarSign } from "lucide-react";
 import { useEffect } from "react";
 import { SOSType } from "@/types/sos";
 import { getSOSButton, TITULAIRE_NAME } from "@/config/sos-config";
@@ -51,7 +51,18 @@ const Confirmation = () => {
   };
 
   const getIconForType = () => {
-    return '✓';
+    switch (sosType) {
+      case 'danger':
+        return <AlertTriangle className="w-12 h-12" strokeWidth={2.5} />;
+      case 'medical':
+        return <Heart className="w-12 h-12" strokeWidth={2.5} />;
+      case 'pickup':
+        return <MapPin className="w-12 h-12" strokeWidth={2.5} />;
+      case 'financial':
+        return <DollarSign className="w-12 h-12" strokeWidth={2.5} />;
+      default:
+        return <CheckCircle2 className="w-12 h-12" strokeWidth={2.5} />;
+    }
   };
 
   return (
@@ -62,14 +73,14 @@ const Confirmation = () => {
           <div className="flex justify-center">
             <div className="relative">
               <div 
-                className="absolute inset-0 rounded-full animate-ping opacity-20"
+                className="absolute inset-0 rounded-full animate-pulse opacity-30"
                 style={{ backgroundColor: sosConfig?.color || '#10B981' }}
               />
               <div 
-                className="relative w-32 h-32 rounded-full text-white flex items-center justify-center"
+                className="relative w-20 h-20 rounded-full text-white flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: sosConfig?.color || '#10B981' }}
               >
-                <span className="text-6xl">{getIconForType()}</span>
+                {getIconForType()}
               </div>
             </div>
           </div>
