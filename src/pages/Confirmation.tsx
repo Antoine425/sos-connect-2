@@ -93,22 +93,14 @@ const Confirmation = () => {
             
             {sosConfig && (
               <div className="bg-card rounded-2xl p-6 border border-border shadow-soft">
-                <div className="text-center mb-3">
-                  <span className="text-lg font-semibold">{sosConfig.title}</span>
-                </div>
-                
-                <p className="text-sm text-muted-foreground mb-4">
-                  "{sosConfig.message}"
-                </p>
-
                         {sosConfig.gpsRequired && (
                           <div className="text-center text-sm space-y-3">
-                            <span className={hasLocation ? "text-green-600 font-semibold text-base" : "text-orange-600 font-semibold text-base"}>
-                              {hasLocation
-                                ? "✅ Position partagée automatiquement"
-                                : "⚠️ Position non disponible - SOS envoyé sans géolocalisation"
-                              }
-                            </span>
+                            {/* Message seulement si pas de position */}
+                            {!hasLocation && (
+                              <span className="text-orange-600 font-semibold text-base">
+                                ⚠️ Position non disponible - SOS envoyé sans géolocalisation
+                              </span>
+                            )}
                             
                             {/* Debug: Position reçue mais pas d'objet gpsLocation */}
                             {hasLocation && !gpsLocation && (
@@ -123,7 +115,7 @@ const Confirmation = () => {
                               <div className="mt-3 bg-green-50 dark:bg-green-950/30 border-2 border-green-300 dark:border-green-800 rounded-lg p-4 space-y-3">
                                 {/* Titre */}
                                 <div className="text-green-800 dark:text-green-200 font-bold text-base">
-                                  📍 Votre Position GPS
+                                  ✅ Position partagée avec succès
                                 </div>
                                 
                                 {/* Précision de la position */}
@@ -153,9 +145,9 @@ const Confirmation = () => {
                                   href={`https://www.google.com/maps?q=${gpsLocation.lat},${gpsLocation.lng}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                                  className="block text-center text-blue-600 hover:text-blue-800 underline text-sm font-medium py-1 transition-colors"
                                 >
-                                  🗺️ Voir ma position sur Google Maps
+                                  Voir sur Google Maps
                                 </a>
                               </div>
                             )}
