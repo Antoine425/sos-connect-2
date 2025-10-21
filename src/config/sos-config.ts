@@ -51,7 +51,7 @@ export const SOS_BUTTONS: SOSButtonConfig[] = [
     icon: '',
     color: '#4CAF50',
     message: 'J\'ai besoin d\'une recharge de carte.',
-    gpsRequired: false,
+    gpsRequired: true,
     amountOptions: [20, 50, 100],
     animation: 'none',
     priority: 'low'
@@ -76,7 +76,7 @@ export const getHelpMessage = (sosType?: string): string => {
     case 'pickup':
       return 'Restez où vous êtes. Votre position sera envoyée.';
     case 'financial':
-      return 'Sélectionnez un montant puis validez la recharge.';
+      return 'Sélectionnez un montant. Votre position sera partagée.';
     default:
       return 'Appuyez sur un bouton pour envoyer votre SOS.';
   }

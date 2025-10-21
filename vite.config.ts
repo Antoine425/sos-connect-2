@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
         name: 'SOS Connect',
         short_name: 'SOS Connect',
         description: 'Application d\'urgence familiale - Alertez vos proches en un clic',
-        version: '1.0.0',  // Version pour tracking des mises à jour
+        version: '1.0.1',  // Version pour tracking des mises à jour (nouvelle icône V2)
         theme_color: '#2563eb',
         background_color: '#ffffff',
         display: 'standalone',
