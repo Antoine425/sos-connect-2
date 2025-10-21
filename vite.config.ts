@@ -11,9 +11,11 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
+        id: '/sos-connect-2/',  // Identifiant unique stable pour iOS
         name: 'SOS Connect',
         short_name: 'SOS Connect',
         description: 'Application d\'urgence familiale - Alertez vos proches en un clic',
+        version: '1.0.0',  // Version pour tracking des mises à jour
         theme_color: '#2563eb',
         background_color: '#ffffff',
         display: 'standalone',
@@ -22,19 +24,30 @@ export default defineConfig(({ mode }) => ({
         start_url: mode === 'production' ? '/sos-connect-2/' : '/',
         icons: [
           {
+            src: mode === 'production' ? '/sos-connect-2/apple-touch-icon.png' : 'apple-touch-icon.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
             src: mode === 'production' ? '/sos-connect-2/icon-192.png' : 'icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'maskable any'
           },
           {
             src: mode === 'production' ? '/sos-connect-2/icon-512.png' : 'icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'maskable any'
           }
         ]
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -47,6 +60,17 @@ export default defineConfig(({ mode }) => ({
               },
               cacheableResponse: {
                 statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/antoine425\.github\.io\/sos-connect-2\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'sos-connect-app-shell',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 jours
               }
             }
           }
