@@ -1,4 +1,4 @@
-export type SOSType = 'danger' | 'medical' | 'pickup' | 'financial';
+export type SOSType = 'financial' | 'security' | 'medical' | 'location';
 
 export interface SOSButtonConfig {
   id: SOSType;

@@ -16,45 +16,45 @@ export const TITULAIRE_NAME = getTitulaireName();
 
 export const SOS_BUTTONS: SOSButtonConfig[] = [
   {
-    id: 'danger',
-    title: 'Je suis en danger',
+    id: 'financial',
+    title: 'SOS Finance',
     icon: '',
-    color: '#FF4444',
-    message: 'Je suis en danger. Aide-moi maintenant.',
+    color: '#FF521C',
+    message: 'Demande d\'aide financière.',
+    gpsRequired: true,
+    amountOptions: [20, 50, 100],
+    animation: 'none',
+    priority: 'medium'
+  },
+  {
+    id: 'security',
+    title: 'SOS Sécurité',
+    icon: '',
+    color: '#DC2626',
+    message: 'Demande d\'aide pour sécurité.',
     gpsRequired: true,
     animation: 'none',
     priority: 'high'
   },
   {
     id: 'medical',
-    title: 'Détresse médicale',
+    title: 'SOS Santé',
     icon: '',
-    color: '#FF6B3D',
-    message: 'Je suis en détresse médicale. Aide-moi.',
+    color: '#059669',
+    message: 'Demande d\'aide médicale.',
     gpsRequired: true,
     animation: 'none',
     priority: 'high'
   },
   {
-    id: 'pickup',
-    title: 'Viens me chercher',
+    id: 'location',
+    title: 'SOS Localisation',
     icon: '',
-    color: '#2AA5A0',
-    message: 'Viens me chercher. Voici ma position.',
+    color: '#2563EB',
+    message: 'Demande de partage de localisation.',
     gpsRequired: true,
     animation: 'none',
     priority: 'medium'
-  },
-  {
-    id: 'financial',
-    title: 'Recharge ma carte',
-    icon: '',
-    color: '#4CAF50',
-    message: 'J\'ai besoin d\'une recharge de carte.',
-    gpsRequired: true,
-    amountOptions: [20, 50, 100],
-    animation: 'none',
-    priority: 'low'
   }
 ];
 
@@ -65,19 +65,19 @@ export const getSOSButton = (type: string): SOSButtonConfig | undefined => {
 // Messages d'aide contextuels affichés en bas de la page principale
 export const getHelpMessage = (sosType?: string): string => {
   if (!sosType) {
-    return 'Appuyez sur un bouton pour envoyer votre SOS.';
+    return 'Sélectionnez un type d\'assistance pour envoyer votre demande.';
   }
 
   switch (sosType) {
-    case 'danger':
-      return 'Mettez-vous en sécurité. Votre position sera partagée.';
-    case 'medical':
-      return 'Installez-vous confortablement. Aide en route.';
-    case 'pickup':
-      return 'Restez où vous êtes. Votre position sera envoyée.';
     case 'financial':
-      return 'Sélectionnez un montant. Votre position sera partagée.';
+      return 'Sélectionnez un montant pour votre demande financière.';
+    case 'security':
+      return 'Votre position sera partagée pour assurer votre sécurité.';
+    case 'medical':
+      return 'Votre position sera partagée pour l\'assistance médicale.';
+    case 'location':
+      return 'Votre position sera partagée avec votre titulaire.';
     default:
-      return 'Appuyez sur un bouton pour envoyer votre SOS.';
+      return 'Sélectionnez un type d\'assistance pour envoyer votre demande.';
   }
 };

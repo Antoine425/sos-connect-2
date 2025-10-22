@@ -55,7 +55,9 @@ export const SOSButtonsGrid = ({ onSOSClick, disabled = false, selectedType }: S
                 "border-2",
                 selectedAmount ? "border-green-400" : "border-transparent"
               )}
-              style={{ backgroundColor: button.color }}
+              style={{ 
+                background: `linear-gradient(135deg, ${button.color} 0%, ${button.color}dd 50%, ${button.color}aa 100%)`
+              }}
             >
               {/* Titre et montants */}
               <div className="p-4 space-y-3">
@@ -135,15 +137,16 @@ export const SOSButtonsGrid = ({ onSOSClick, disabled = false, selectedType }: S
                 "w-full h-20 rounded-2xl text-white font-bold relative overflow-hidden shadow-lg hover:shadow-xl",
                 "hover:scale-[1.02] active:scale-[0.98] transition-all duration-200",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
-                "flex items-center justify-center px-6"
+                "flex items-center justify-center px-6",
+                "bg-gradient-to-br from-white/20 to-black/20"
               )}
               style={{ 
-                backgroundColor: button.color,
+                background: `linear-gradient(135deg, ${button.color} 0%, ${button.color}dd 50%, ${button.color}aa 100%)`,
                 borderColor: button.color
               }}
             >
               {/* Titre du bouton */}
-              <span className="text-xl font-bold leading-tight text-center">
+              <span className="text-lg font-bold leading-tight text-center drop-shadow-lg">
                 {button.title}
               </span>
             </Button>
