@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { SOSButtonsGrid } from "@/components/SOSButtonsGrid";
 import { MobileDebugConsole } from "@/components/MobileDebugConsole";
 import BottomNavigation from "@/components/BottomNavigation";
+import SOSLoader from "@/components/SOSLoader";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { SOSType } from "@/types/sos";
@@ -14,6 +15,7 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentSOSType, setCurrentSOSType] = useState<SOSType | null>(null);
+  const [currentAmount, setCurrentAmount] = useState<number | undefined>(undefined);
   const [selectedSOSType, setSelectedSOSType] = useState<SOSType | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const { requestLocation } = useGeolocation();
@@ -23,6 +25,7 @@ const Index = () => {
 
   const handleSOSClick = async (type: SOSType, amount?: number) => {
     setCurrentSOSType(type);
+    setCurrentAmount(amount);
 
     try {
       // Get location if required BEFORE showing "sending" screen
@@ -37,7 +40,6 @@ const Index = () => {
         console.log("🧭 Geolocation disponible:", 'geolocation' in navigator);
         
         setIsGettingLocation(true);
-        toast.info("Obtention de votre position haute précision...", { duration: 2000 });
         
         location = await requestLocation();
         setIsGettingLocation(false);
@@ -51,12 +53,9 @@ const Index = () => {
             duration: 5000,
             description: "Cliquez sur 'Diagnostic GPS' en bas de page pour identifier le problème"
           });
+          return; // Arrêter le processus si la géolocalisation échoue
         } else {
           console.log("✅ Géolocalisation réussie:", location);
-          const accuracyText = location.accuracy 
-            ? ` (Précision: ${location.accuracy.toFixed(0)}m)`
-            : '';
-          toast.success(`Position partagée avec succès${accuracyText}`, { duration: 3000 });
         }
       }
 
@@ -181,7 +180,6 @@ const Index = () => {
                           setSelectedSOSType(type);
                           handleSOSClick(type, amount);
                         }}
-                        disabled={isSubmitting || isGettingLocation}
                         selectedType={selectedSOSType}
                       />
 
@@ -199,6 +197,15 @@ const Index = () => {
         {/* Bottom Navigation */}
         <BottomNavigation />
       </div>
+      
+      {/* SOS Loader */}
+      {(isSubmitting || isGettingLocation) && (
+        <SOSLoader 
+          type={currentSOSType || 'security'} 
+          amount={currentAmount}
+          isGettingLocation={isGettingLocation}
+        />
+      )}
       
       {/* Mobile Debug Console (activate with ?debug=true) */}
       {showDebugConsole && <MobileDebugConsole />}

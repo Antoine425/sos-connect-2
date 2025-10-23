@@ -7,11 +7,10 @@ import { cn } from '@/lib/utils';
 
 interface SOSButtonsGridProps {
   onSOSClick: (type: SOSType, amount?: number) => void;
-  disabled?: boolean;
   selectedType?: SOSType | null;
 }
 
-export const SOSButtonsGrid = ({ onSOSClick, disabled = false, selectedType }: SOSButtonsGridProps) => {
+export const SOSButtonsGrid = ({ onSOSClick, selectedType }: SOSButtonsGridProps) => {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [isCustom, setIsCustom] = useState(false);
@@ -118,7 +117,7 @@ export const SOSButtonsGrid = ({ onSOSClick, disabled = false, selectedType }: S
               {/* Bouton de validation */}
               <Button
                 onClick={() => handleButtonClick(button.id)}
-                disabled={disabled || (!selectedAmount && !isCustom) || (isCustom && !customAmount)}
+                disabled={(!selectedAmount && !isCustom) || (isCustom && !customAmount)}
                 className={cn(
                   "w-full h-16 rounded-none bg-black/20 text-white font-bold",
                   "hover:bg-black/30 active:bg-black/40 transition-all duration-300",
@@ -137,12 +136,10 @@ export const SOSButtonsGrid = ({ onSOSClick, disabled = false, selectedType }: S
             /* Bouton principal rectangulaire pour les autres types */
             <Button
               onClick={() => handleButtonClick(button.id)}
-              disabled={disabled}
               className={cn(
                 "w-full h-24 rounded-3xl text-white font-bold relative overflow-hidden",
                 "shadow-2xl hover:shadow-3xl transition-all duration-300",
                 "hover:scale-[1.02] active:scale-[0.98]",
-                "disabled:opacity-50 disabled:cursor-not-allowed",
                 "flex items-center justify-center px-6",
                 "border-2 border-white/20 backdrop-blur-sm",
                 "before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300"
