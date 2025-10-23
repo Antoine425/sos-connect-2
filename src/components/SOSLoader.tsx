@@ -48,11 +48,11 @@ const SOSLoader = ({ type, amount, isGettingLocation = false }: SOSLoaderProps) 
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 mx-4 max-w-sm w-full shadow-2xl">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 mx-4 w-80 h-80 flex flex-col justify-center shadow-2xl">
         <div className="text-center space-y-6">
-          {/* Icône animée */}
+          {/* Icône animée - taille fixe */}
           <div className="flex justify-center">
-            <div className="relative">
+            <div className="relative w-24 h-24">
               {/* Cercle de pulsation */}
               <div 
                 className="absolute inset-0 rounded-full animate-ping opacity-30"
@@ -62,17 +62,21 @@ const SOSLoader = ({ type, amount, isGettingLocation = false }: SOSLoaderProps) 
                 className="relative w-24 h-24 rounded-full text-white flex items-center justify-center shadow-lg"
                 style={{ backgroundColor: sosConfig?.color || '#DC2626' }}
               >
-                {getIconForType()}
+                {isGettingLocation ? (
+                  <MapPin className="w-16 h-16" strokeWidth={2.5} />
+                ) : (
+                  getIconForType()
+                )}
               </div>
             </div>
           </div>
 
-          {/* Message principal */}
-          <div className="space-y-2">
+          {/* Message principal - hauteur fixe */}
+          <div className="space-y-2 h-16 flex flex-col justify-center">
             <h2 className="text-xl font-bold text-foreground">
               {sosConfig?.title || 'SOS'}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm leading-tight">
               {getMessage()}
             </p>
           </div>
