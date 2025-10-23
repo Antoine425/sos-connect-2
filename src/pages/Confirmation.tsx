@@ -38,11 +38,11 @@ const Confirmation = () => {
     if (!sosConfig) return "Votre alerte a été envoyée.";
     
     switch (sosType) {
-      case 'danger':
-        return `Votre alerte de danger a été envoyée à ${TITULAIRE_NAME}.`;
+      case 'security':
+        return `Votre alerte de sécurité a été envoyée à ${TITULAIRE_NAME}.`;
       case 'medical':
         return `Votre alerte médicale a été transmise à ${TITULAIRE_NAME}.`;
-      case 'pickup':
+      case 'location':
         return `Votre position a été envoyée à ${TITULAIRE_NAME}.`;
       case 'financial':
         return `Votre demande d'aide de ${amount}€ a été envoyée à ${TITULAIRE_NAME}.`;
@@ -53,11 +53,11 @@ const Confirmation = () => {
 
   const getIconForType = () => {
     switch (sosType) {
-      case 'danger':
+      case 'security':
         return <AlertTriangle className="w-12 h-12" strokeWidth={2.5} />;
       case 'medical':
         return <Heart className="w-12 h-12" strokeWidth={2.5} />;
-      case 'pickup':
+      case 'location':
         return <MapPin className="w-12 h-12" strokeWidth={2.5} />;
       case 'financial':
         return <DollarSign className="w-12 h-12" strokeWidth={2.5} />;
