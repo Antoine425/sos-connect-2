@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, MapPin, Smartphone, Wifi, Battery, Globe } from "lucide-react";
 import { toast } from "sonner";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const Diagnostic = () => {
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ const Diagnostic = () => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6">
+      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24">
         <div className="space-y-6">
           {/* Title */}
           <div className="text-center space-y-2">
@@ -265,21 +266,10 @@ const Diagnostic = () => {
             Retour à l'accueil
           </Button>
         </div>
-      </main>
+        </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-4 px-4 mt-4">
-        <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
-          <img 
-            src="/sos-connect-2/logo-sos-connect.png" 
-            alt="SOS Connect" 
-            className="h-8 w-auto object-contain opacity-70"
-          />
-          <div className="text-xs text-muted-foreground text-center">
-            <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
-          </div>
-        </div>
-      </footer>
+        {/* Bottom Navigation */}
+        <BottomNavigation />
     </div>
   );
 };

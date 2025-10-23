@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Download, AlertTriangle, Stethoscope, Car, CreditCard } from "lucide-react";
+import BottomNavigation from "@/components/BottomNavigation";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -80,7 +81,7 @@ const Install = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 pb-24">
       <div className="w-full px-4 py-6">
         <div className="text-center space-y-6">
           {/* Logo */}
@@ -243,38 +244,11 @@ const Install = () => {
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="text-center space-y-2">
-            <img 
-              src="/sos-connect-2/logo-sos-connect.png" 
-              alt="SOS Connect" 
-              className="h-8 w-auto object-contain opacity-70 mx-auto"
-            />
-            <div className="text-xs text-muted-foreground">
-              <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
-              <div className="flex justify-center gap-2 mt-1">
-                <a 
-                  href="https://paytrip.fr/mentions-legales" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Mentions légales
-                </a>
-                <span>/</span>
-                <a 
-                  href="https://paytrip.fr/confidentialite" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Confidentialité
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+      
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 };

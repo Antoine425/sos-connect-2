@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { SOSButtonsGrid } from "@/components/SOSButtonsGrid";
 import { MobileDebugConsole } from "@/components/MobileDebugConsole";
+import BottomNavigation from "@/components/BottomNavigation";
 import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { SOSType } from "@/types/sos";
@@ -106,7 +107,7 @@ const Index = () => {
 
   return (
     <>
-    <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border px-4 py-4">
           <div className="container max-w-md mx-auto flex items-center justify-center">
@@ -118,8 +119,8 @@ const Index = () => {
           </div>
         </header>
 
-      {/* Main Content */}
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6">
+        {/* Main Content */}
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24">
         <div className="space-y-4">
           {/* Instructions */}
           <div className="text-center">
@@ -195,45 +196,8 @@ const Index = () => {
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t border-border py-4 px-4 mt-1">
-          <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
-            <img 
-              src="/sos-connect-2/logo-sos-connect.png" 
-              alt="SOS Connect" 
-              className="h-8 w-auto object-contain opacity-70"
-            />
-            <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground text-center">
-              <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                <a 
-                  href="https://paytrip.fr/mentions-legales" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Mentions légales
-                </a>
-                <span>/</span>
-                <a 
-                  href="https://paytrip.fr/confidentialite" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Confidentialité
-                </a>
-                <span>/</span>
-                <button
-                  onClick={() => navigate("/diagnostic")}
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  🔍 Diagnostic GPS
-                </button>
-              </div>
-            </div>
-          </div>
-        </footer>
+        {/* Bottom Navigation */}
+        <BottomNavigation />
       </div>
       
       {/* Mobile Debug Console (activate with ?debug=true) */}

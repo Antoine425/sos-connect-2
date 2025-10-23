@@ -4,6 +4,7 @@ import { Home, CheckCircle2, AlertTriangle, Heart, MapPin, DollarSign } from "lu
 import { useEffect } from "react";
 import { SOSType } from "@/types/sos";
 import { getSOSButton, TITULAIRE_NAME } from "@/config/sos-config";
+import BottomNavigation from "@/components/BottomNavigation";
 
 const Confirmation = () => {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ const Confirmation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 pb-24">
       <div className="container max-w-md mx-auto">
         <div className="text-center space-y-8 animate-fade-in-up">
           {/* Success Icon */}
@@ -178,39 +179,10 @@ const Confirmation = () => {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="py-4 px-4 mt-8">
-          <div className="container max-w-md mx-auto flex flex-col items-center gap-2">
-            <img 
-              src="/sos-connect-2/logo-sos-connect.png" 
-              alt="SOS Connect" 
-              className="h-8 w-auto object-contain opacity-70"
-            />
-            <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground text-center">
-              <p>© 2025. PayTrip.fr. Tous droits réservés.</p>
-              <div className="flex gap-2">
-                <a 
-                  href="https://paytrip.fr/mentions-legales" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Mentions légales
-                </a>
-                <span>/</span>
-                <a 
-                  href="https://paytrip.fr/confidentialite" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground underline transition-colors"
-                >
-                  Confidentialité
-                </a>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
+      
+      {/* Bottom Navigation */}
+      <BottomNavigation />
     </div>
   );
 };
