@@ -23,6 +23,18 @@ export const useGeolocation = (): GeolocationHook => {
       console.log("🔒 Protocol:", window.location.protocol);
       console.log("🏠 Hostname:", window.location.hostname);
       
+      // Vérifications préalables pour mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      console.log("📱 Appareil mobile détecté:", isMobile);
+      
+      if (isMobile && window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        console.warn("⚠️ ATTENTION: Géolocalisation sur mobile nécessite HTTPS");
+        setError("Géolocalisation impossible: HTTPS requis sur mobile");
+        setIsLoading(false);
+        resolve(null);
+        return;
+      }
+      
       // Check if geolocation is available
       if (!navigator.geolocation) {
         console.error("❌ API Geolocation non disponible");
@@ -45,7 +57,7 @@ export const useGeolocation = (): GeolocationHook => {
       let watchId: number | null = null;
       let hasResolved = false;
       
-      // Timer pour accepter la meilleure position après 8 secondes
+      // Timer pour accepter la meilleure position après 15 secondes (plus long pour mobile)
       const timer = setTimeout(() => {
         if (watchId !== null) {
           navigator.geolocation.clearWatch(watchId);
@@ -59,17 +71,17 @@ export const useGeolocation = (): GeolocationHook => {
           resolve(bestPosition);
         } else if (!hasResolved) {
           console.warn("❌ Aucune position obtenue après timeout");
-          setError("Impossible d'obtenir une position précise");
+          setError("Impossible d'obtenir une position précise. Vérifiez que le GPS est activé et que vous êtes en extérieur.");
           setIsLoading(false);
           hasResolved = true;
           resolve(null);
         }
-      }, 8000); // 8 secondes pour obtenir la meilleure position possible
+      }, 15000); // 15 secondes pour mobile (plus de temps pour le GPS)
 
-      // Options pour une haute précision
+      // Options pour une haute précision (optimisées pour mobile)
       const options: PositionOptions = {
         enableHighAccuracy: true, // Active le GPS pour une meilleure précision
-        timeout: 10000, // Timeout par position
+        timeout: 15000, // Timeout par position (plus long pour mobile)
         maximumAge: 0 // Force une nouvelle position, pas de cache
       };
 
@@ -137,17 +149,17 @@ export const useGeolocation = (): GeolocationHook => {
             switch (error.code) {
               case error.PERMISSION_DENIED:
                 errorMessage = "Géolocalisation refusée";
-                detailedMessage = "Sur mobile: Réglages → Safari/Chrome → Localisation → Autoriser ce site";
+                detailedMessage = "Sur iPhone: Réglages → Safari → Localisation → Autoriser\nSur Android: Paramètres → Applications → Chrome → Autorisations → Localisation";
                 console.error("💡 Solution:", detailedMessage);
                 break;
               case error.POSITION_UNAVAILABLE:
                 errorMessage = "Position indisponible";
-                detailedMessage = "Activez le GPS dans les paramètres de votre téléphone";
+                detailedMessage = "Vérifiez que le GPS est activé dans les paramètres de votre téléphone et que vous êtes en extérieur";
                 console.error("💡 Solution:", detailedMessage);
                 break;
               case error.TIMEOUT:
                 errorMessage = "Délai d'attente dépassé";
-                detailedMessage = "Le GPS met trop de temps. Êtes-vous en extérieur?";
+                detailedMessage = "Le GPS met trop de temps. Essayez d'aller en extérieur avec une vue dégagée sur le ciel";
                 console.error("💡 Solution:", detailedMessage);
                 break;
             }

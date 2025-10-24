@@ -98,13 +98,13 @@ const Diagnostic = () => {
           let errorMessage = '';
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMessage = "Permission refusée. Sur mobile, allez dans Paramètres > Safari/Chrome > Autoriser l'accès à la position pour ce site.";
+              errorMessage = "Permission refusée. Sur iPhone: Réglages → Safari → Localisation → Autoriser. Sur Android: Paramètres → Applications → Chrome → Autorisations → Localisation.";
               break;
             case error.POSITION_UNAVAILABLE:
-              errorMessage = "Position indisponible. Vérifiez que le GPS est activé dans les paramètres de votre téléphone.";
+              errorMessage = "Position indisponible. Vérifiez que le GPS est activé dans les paramètres de votre téléphone et que vous êtes en extérieur.";
               break;
             case error.TIMEOUT:
-              errorMessage = "Délai d'attente dépassé. Le GPS met trop de temps à répondre.";
+              errorMessage = "Délai d'attente dépassé. Le GPS met trop de temps à répondre. Essayez d'aller en extérieur avec une vue dégagée sur le ciel.";
               break;
             default:
               errorMessage = "Erreur inconnue.";
@@ -150,14 +150,34 @@ const Diagnostic = () => {
           </div>
 
           {/* Run Diagnostic Button */}
-          <Button
-            onClick={runDiagnostics}
-            disabled={isRunning}
-            size="lg"
-            className="w-full h-14 text-lg font-semibold rounded-full"
-          >
-            {isRunning ? "Diagnostic en cours..." : "Lancer le diagnostic"}
-          </Button>
+          <div className="space-y-3">
+            <Button
+              onClick={runDiagnostics}
+              disabled={isRunning}
+              size="lg"
+              className="w-full h-14 text-lg font-semibold rounded-full"
+            >
+              {isRunning ? "Diagnostic en cours..." : "Lancer le diagnostic"}
+            </Button>
+            
+            {/* Bouton pour forcer la demande de permission */}
+            <Button
+              onClick={() => {
+                if ('geolocation' in navigator) {
+                  navigator.geolocation.getCurrentPosition(
+                    () => toast.success("Permission accordée !"),
+                    () => toast.error("Permission refusée. Vérifiez les paramètres."),
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                  );
+                }
+              }}
+              variant="outline"
+              size="lg"
+              className="w-full h-12 text-base font-medium rounded-full"
+            >
+              🔄 Forcer la demande de permission
+            </Button>
+          </div>
 
           {/* Results */}
           {Object.keys(diagnostics).length > 0 && (

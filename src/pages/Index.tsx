@@ -48,10 +48,10 @@ const Index = () => {
           console.error("❌ ÉCHEC GÉOLOCALISATION - Aucune position retournée");
           console.error("Vérifiez la console pour voir les erreurs détaillées");
           
-          // Message d'erreur plus visible
+          // Message d'erreur plus visible avec solutions
           toast.error("❌ Impossible d'obtenir votre position", { 
-            duration: 5000,
-            description: "Cliquez sur 'Diagnostic GPS' en bas de page pour identifier le problème"
+            duration: 8000,
+            description: "Vérifiez les permissions de géolocalisation dans les paramètres de votre navigateur. Cliquez sur 'Diagnostic GPS' pour plus d'aide."
           });
           return; // Arrêter le processus si la géolocalisation échoue
         } else {
