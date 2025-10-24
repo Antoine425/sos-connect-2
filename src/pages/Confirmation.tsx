@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, CheckCircle2, AlertTriangle, Heart, MapPin, DollarSign } from "lucide-react";
+import { Home, CheckCircle2, AlertTriangle, Heart, MapPin, DollarSign, Navigation, ExternalLink } from "lucide-react";
 import { useEffect } from "react";
 import { SOSType } from "@/types/sos";
 import { getSOSButton, TITULAIRE_NAME } from "@/config/sos-config";
@@ -141,15 +141,28 @@ const Confirmation = () => {
                                   <div className="font-semibold">📍 Longitude: {gpsLocation.lng.toFixed(6)}</div>
                                 </div>
                                 
-                                {/* Lien vers Google Maps */}
-                                <a 
-                                  href={`https://www.google.com/maps?q=${gpsLocation.lat},${gpsLocation.lng}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block text-center text-blue-600 hover:text-blue-800 underline text-sm font-medium py-1 transition-colors"
-                                >
-                                  Voir sur Google Maps
-                                </a>
+                                {/* Liens de navigation */}
+                                <div className="flex flex-col gap-2 mt-3">
+                                  <a 
+                                    href={`waze://?ll=${gpsLocation.lat},${gpsLocation.lng}&navigate=yes`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 text-center text-purple-600 hover:text-purple-800 text-sm font-medium py-2 px-3 bg-purple-50 dark:bg-purple-950/30 rounded-lg border border-purple-200 dark:border-purple-800 transition-colors"
+                                  >
+                                    <Navigation className="w-4 h-4" />
+                                    Ouvrir dans Waze
+                                  </a>
+                                  
+                                  <a 
+                                    href={`https://www.google.com/maps?q=${gpsLocation.lat},${gpsLocation.lng}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 text-center text-blue-600 hover:text-blue-800 text-sm font-medium py-2 px-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors"
+                                  >
+                                    <ExternalLink className="w-4 h-4" />
+                                    Ouvrir dans Google Maps
+                                  </a>
+                                </div>
                               </div>
                             )}
                           </div>
